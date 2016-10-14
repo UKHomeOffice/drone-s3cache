@@ -1,6 +1,7 @@
-# drone-s3cache
+# drone-s3cache [![Docker Repository on Quay](https://quay.io/repository/ukhomeofficedigital/drone-s3cache/status "Docker Repository on Quay")](https://quay.io/repository/ukhomeofficedigital/drone-s3cache)
 
-Drone plugin for caching build artifacts in S3
+Drone plugin for caching build artifacts in S3 
+
 
 This plugin allows for caching build artifact directories containing external libraries, packages, etc in S3 which should speed up build process. Cache is currently keyed by repository name e.g. `UKHomeOffice/<project_name>`. This should suffice in most cases. S3 cache automatically expires after 7 days.  
 
