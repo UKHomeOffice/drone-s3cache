@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
+set -o errexit
+set -o pipefail
+
 folders="${DRONE_S3_CACHE_FOLDERS:-$PLUGIN_DRONE_S3_CACHE_FOLDERS}"
 cache_bucket="${DRONE_S3_CACHE_BUCKET_NAME:-$PLUGIN_DRONE_S3_CACHE_BUCKET_NAME}"
 mode="${1:-$PLUGIN_DRONE_S3_CACHE_MODE}"
+endpoint=${AWS_S3_ENDPOINT:-"s3-eu-west-2.amazonaws.com"}
 
 export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$DRONE_S3_CACHE_AWS_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$DRONE_S3_CACHE_AWS_SECRET_ACCESS_KEY}"
@@ -12,23 +16,23 @@ case $mode in
       echo "-- Pulling cache from S3..."
 
       cd / && gof3r get -b $cache_bucket -k $DRONE_REPO/cache.tar \
-        --endpoint=s3-eu-west-1.amazonaws.com | tar -xf -
+        --endpoint=${endpoint} | tar -xf -
     ;;
     push)
       echo "-- Pushing cache to S3..."
-      
+
       cdirs=""
-      for f in $(echo $folders | tr -d '[[:space:]]' | tr "," "\n"); do 
+      for f in $(echo $folders | tr -d '[[:space:]]' | tr "," "\n"); do
         if [ -d $PWD/$f ]; then
           cdirs="$cdirs $PWD/$f"
         fi
       done
 
       tar -cf - $cdirs | gof3r put -b $cache_bucket -k $DRONE_REPO/cache.tar \
-        -m x-amz-server-side-encryption:AES256 --endpoint=s3-eu-west-1.amazonaws.com
+      -m x-amz-server-side-encryption:AES256 --endpoint=${endpoint}
     ;;
     *)
-      echo "-- Supported modes: 
+      echo "-- Supported modes:
               pull - restore cache from S3.
               push - cache in S3.
             "
