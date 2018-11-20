@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-set -o errexit
-set -o pipefail
-
 folders="${DRONE_S3_CACHE_FOLDERS:-$PLUGIN_DRONE_S3_CACHE_FOLDERS}"
 cache_bucket="${DRONE_S3_CACHE_BUCKET_NAME:-$PLUGIN_DRONE_S3_CACHE_BUCKET_NAME}"
 mode="${1:-$PLUGIN_DRONE_S3_CACHE_MODE}"
